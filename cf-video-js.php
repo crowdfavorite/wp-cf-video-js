@@ -153,8 +153,8 @@ function cfvj_video($atts) {
 			
 			$flash_vid .= '
 				<object class="vjs-flash-fallback" width="'.$width.'" height="'.$height.'" type="application/x-shockwave-flash"
-					data="http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf">
-					<param name="movie" value="http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf" />
+					data="'.CFVJ_URL.'/flowplayer/flowplayer-3.2.2.swf">
+					<param name="movie" value="'.CFVJ_URL.'/flowplayer/flowplayer-3.2.2.swf" />
 					<param name="allowfullscreen" value="true" />
 					<param name="flashvars" value=\'config={"clip":{"url":"'.$sources['mp4'].'","autoPlay":false,"autoBuffering":true}}\' />
 					'.$poster_img.'
