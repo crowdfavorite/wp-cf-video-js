@@ -194,9 +194,6 @@ add_action('admin_init','cfvj_add_readme');
  */
 function cfvj_readme() {
 	$file = CFVJ_DIR.'README.txt';
-	echo '<pre><code>';
-		var_dump($file);
-	echo '</code></pre>';
 	if(is_file($file) && is_readable($file)) {
 		$markdown = file_get_contents($file);
 		return $markdown;
