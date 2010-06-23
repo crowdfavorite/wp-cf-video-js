@@ -18,7 +18,7 @@ define('CFVJ_VER', '.01');
 if (!defined('PLUGINDIR')) {
 	define('PLUGINDIR','wp-content/plugins/');
 }
-define('CFVJ_DIR', apply_filters('cfvj_dir', PLUGINDIR.'/cf-video-js/', PLUGINDIR));
+define('CFVJ_DIR', apply_filters('cfvj_dir', trailingslashit(realpath(dirname(__FILE__)))));
 define('CFVJ_URL', apply_filters('cfvj_url', plugins_url().'/cf-video-js/', plugins_url()));
 
 function cfvj_init() {
@@ -194,6 +194,9 @@ add_action('admin_init','cfvj_add_readme');
  */
 function cfvj_readme() {
 	$file = CFVJ_DIR.'README.txt';
+	echo '<pre><code>';
+		var_dump($file);
+	echo '</code></pre>';
 	if(is_file($file) && is_readable($file)) {
 		$markdown = file_get_contents($file);
 		return $markdown;
