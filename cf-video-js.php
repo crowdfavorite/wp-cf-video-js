@@ -22,9 +22,16 @@ define('CFVJ_DIR', apply_filters('cfvj_dir', trailingslashit(realpath(dirname(__
 define('CFVJ_URL', apply_filters('cfvj_url', plugins_url().'/cf-video-js/', plugins_url()));
 
 function cfvj_init() {
-	wp_enqueue_script('jquery');
-	wp_enqueue_script('video-js', CFVJ_URL.'video-js/video.js', array(), CFVJ_VER);
-	wp_enqueue_style('video-js', CFVJ_URL.'video-js/video-js.css', array(), CFVJ_VER);
+	// Register so other plugins can use
+	wp_register_script('video-js', CFVJ_URL.'video-js/video.js', array(), CFVJ_VER);
+	wp_register_style('video-js', CFVJ_URL.'video-js/video-js.css', array(), CFVJ_VER, 'screen');
+	
+	// Enqueue if on the front-end
+	if (!is_admin()) {
+		wp_enqueue_script('jquery');
+		wp_enqueue_script('video-js');
+		wp_enqueue_style('video-js');
+	}
 	add_action('wp_head', 'cfvj_render_js_setup', 9);
 }
 add_action('init', 'cfvj_init');
@@ -32,7 +39,12 @@ add_action('init', 'cfvj_init');
 function cfvj_render_js_setup() {
 	echo '<script type="text/javascript">
 	jQuery(function($){
-	  VideoJS.setup();
+		/* Set up videos on DOMReady */
+		VideoJS.setup();
+		/* Set up videos if tab is AJAX loaded through jQuery UI Tabs */
+		$("body").bind("tabsload", function(event, ui) {
+			VideoJS.setup();
+		});
 	});
 </script>';
 }
