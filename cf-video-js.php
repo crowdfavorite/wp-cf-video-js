@@ -68,7 +68,7 @@ function cfvj_htmlify_attrs($attrs = array()) {
 /**
  * Take a space-separated string of urls and turn them into keyed array of valid sources for video tag
  * Invalid sources are dropped.
- * @param string || array
+ * @param string
  * @return array
  */
 function cfvj_sanitize_sources($str) {
@@ -167,8 +167,16 @@ function cfvj_video($atts) {
 </script>
 ' : '');
 		
-		// Build source tags
+		/*
+		Filter down to valid sources
+		Note: this doesn't check the url's validity, it just looks for the proper file extensions.
+		*/
 		$sources = cfvj_sanitize_sources($src);
+		
+		// No video sources to show? Show an error message.
+		if (empty($sources)) {
+			return '<p>Whoops! Not a valid video type. I was expecting a <code>.mp4</code>, <code>.ogg</code> or <code>.webm</code> file.</p>';
+		}
 		
 		// Get multiple sources
 		$html_sources = cfvj_get_video_sources($sources);
