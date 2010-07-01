@@ -168,6 +168,7 @@ function cfvj_video($atts) {
 					data="'.CFVJ_URL.'/flowplayer/flowplayer-3.2.2.swf">
 					<param name="movie" value="'.CFVJ_URL.'/flowplayer/flowplayer-3.2.2.swf" />
 					<param name="allowfullscreen" value="true" />
+					<param name="wmode" value="opaque" />
 					<param name="flashvars" value=\'config={"clip":{"url":"'.$sources['mp4'].'","autoPlay":false,"autoBuffering":true}}\' />
 					'.$poster_img.'
 				</object>
