@@ -41,10 +41,6 @@ function cfvj_render_js_setup() {
 	jQuery(function($){
 		/* Set up videos on DOMReady */
 		VideoJS.setup();
-		/* Set up videos if tab is AJAX loaded through jQuery UI Tabs */
-		$("body").bind("tabsload", function(event, ui) {
-			VideoJS.setup();
-		});
 	});
 </script>';
 }
@@ -134,10 +130,12 @@ function cfvj_get_video_links($sources) {
 
 function cfvj_video($atts) {
 	$attrs = shortcode_atts(array(
+		'id' => null,
 		'src' => null,
 		'poster' => null,
 		'width' => 640,
-		'height' => 360
+		'height' => 360,
+		'overajax' => false
 	), $atts);
 	
 	extract($attrs);
@@ -146,16 +144,35 @@ function cfvj_video($atts) {
 	// If we have a valid video URL
 	if ($src) {
 		
-		// Set up conditional attributes, etc
+		// Set up attributes
 		$video_attrs = $attrs;
 		// Remove src, since that will be a tag inside of <video>
 		unset($video_attrs['src']);
+		// Remove overajax. That's not a real attribute, but a flag we use below.
+		unset($video_attrs['overajax']);
+		// Remove ID. We'll handle it separately.
+		unset($video_attrs['id']);
+		// Convert array to HTML attributes string
 		$html_attrs = cfvj_htmlify_attrs($video_attrs);
 		
+		// If this video doesn't have an ID, generate one.
+		if (!$id) {
+			$id = uniqid('v-');
+		}
+		
+		$ajax_safe_reg = ($overajax ? '
+<script type="text/javascript">
+	var v = document.getElementById("'.$id.'");
+	new VideoJS(v);
+</script>
+' : '');
+		
+		// Build source tags
 		$sources = cfvj_sanitize_sources($src);
 		
 		// Get multiple sources
 		$html_sources = cfvj_get_video_sources($sources);
+		// Set up fallback links for those that can't view any other way
 		$fallback_links = cfvj_get_video_links($sources);
 		
 		// Output flash if mp4 present
@@ -175,14 +192,13 @@ function cfvj_video($atts) {
 			';
 		}
 		
-		$output = '
-		<div class="video-js-box">
-			<video class="video-js" controls preload '.$html_attrs.'>
-				'.$html_sources.'
-				'.$flash_vid.'
-			</video>
-			'.$fallback_links.'
-		</div>';
+		$output = $ajax_safe_reg.'<div class="video-js-box">
+	<video id="'.$id.'" class="video-js" controls preload '.$html_attrs.'>
+		'.$html_sources.'
+		'.$flash_vid.'
+	</video>
+	'.$fallback_links.'
+</div>';
 	}
 	
 	return $output;
